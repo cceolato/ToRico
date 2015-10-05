@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">TôRico</string>
+    <string name="about">Sobre</string>
+    <string name="action_settings">Configurações</string>
+
+    <string name="salario_bruto">Salário Bruto</string>
+    <string name="horas_trabalhadas">Horas Trabalhadas</string>
+    <string name="percentual_horas_extras">Percentual Horas Extras</string>
+    <string name="title_activity_splash_screen">TôRico</string>
+
+    <string name="tempo">Tempo</string>
+    <string name="valor_segundo">Valor/Segundo</string>
+
+
+    <!-- Sobre -->
+    <string name="about_title">Segundo App...</string>
+    <string name="about_text_one">Utilizar SharedPreferences via XML para armazenar as informações do usuário: Salário bruto, Horas trabalhadas por mês e Percentual extra pago pela empresa pela hora extra trabalhada.</string>
+    <string name="about_text_two">Implementar um Service para o TôRico que atenda aos três comandos: play, pause e stop;</string>
+    <string name="about_text_three">O Service precisa calcular e atualizar a cada segundo a tela com o valor extra acumulado;</string>
+    <string name="about_text_four">Utilizar Handler para agendar a execução do Service a cada segundo;</string>
+    <string name="about_text_five">Utilizar outro Handler para que o Service consiga atualizar a tela da aplicação.</string>
+
+
+</resources>

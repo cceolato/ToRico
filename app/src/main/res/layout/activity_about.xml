@@ -1,0 +1,39 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="br.com.ceolato.torico.activity.AboutActivity">
+
+    <TextView android:text="@string/about_title" android:layout_width="match_parent"
+        android:id="@+id/about_title"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="24sp" />
+
+    <TextView android:text="@string/about_text_one" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp" android:id="@+id/about_text_one"
+        android:layout_below="@+id/about_title" />
+
+    <TextView android:text="@string/about_text_two" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp" android:id="@+id/about_text_two"
+        android:layout_below="@+id/about_text_one" />
+
+    <TextView android:text="@string/about_text_three" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp" android:id="@+id/about_text_three"
+        android:layout_below="@+id/about_text_two" />
+
+    <TextView android:text="@string/about_text_four" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp" android:id="@+id/about_text_four"
+        android:layout_below="@+id/about_text_three" />
+
+    <TextView android:text="@string/about_text_five" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp" android:id="@+id/about_text_five"
+        android:layout_below="@+id/about_text_four" />
+</RelativeLayout>

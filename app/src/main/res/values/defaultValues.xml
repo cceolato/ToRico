@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="salario_bruto">2200</integer>
+    <integer name="horas_mes">220</integer>
+    <integer name="percentual_hora_extra">50</integer>
+</resources>
