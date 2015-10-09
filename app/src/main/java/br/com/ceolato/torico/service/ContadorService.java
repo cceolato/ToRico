@@ -1,5 +1,8 @@
 package br.com.ceolato.torico.service;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +13,11 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v7.app.NotificationCompat;
+
+import br.com.ceolato.torico.R;
+import br.com.ceolato.torico.activity.ToRicoActivity;
 
 public class ContadorService extends Service implements Runnable {
 
@@ -20,27 +28,19 @@ public class ContadorService extends Service implements Runnable {
     private double salarioBruto;
     private int horasTrabalhadas;
     private int percentual;
+    private int objetivo;
     private double valorPorSegundo;
     private String valorPorSegundoAsString;
+    private boolean notificacao;
 
     private Handler myHandler;
     private Handler activityHandler;
 
     @Override
-    public IBinder onBind(Intent arg0) {
-        return new ContadorBinder();
-    }
-
-    public class ContadorBinder extends Binder {
-        public ContadorService getContador() {
-            return ContadorService.this;
-        }
-    }
-
-    @Override
     public void onCreate() {
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         contador = 0;
+        notificacao = false;
         myHandler = new Handler();
     }
 
@@ -56,6 +56,7 @@ public class ContadorService extends Service implements Runnable {
     public void stop() {
         pause();
         contador = 0;
+        notificacao = false;
     }
 
     private void carregarPreferencias() {
@@ -69,6 +70,10 @@ public class ContadorService extends Service implements Runnable {
 
     public void setHandler(Handler myHandler) {
         this.activityHandler = myHandler;
+    }
+
+    public void setObjetivo(int objetivo){
+        this.objetivo = objetivo;
     }
 
     public void run() {
@@ -85,10 +90,19 @@ public class ContadorService extends Service implements Runnable {
             bundle.putString("tempo", getTempo());
             bundle.putString("valor", getValor());
             bundle.putString("valorSegundo", valorPorSegundoAsString);
+            bundle.putDouble("valorAcumulado", getValorAcumulado());
 
             Message msg = new Message();
             msg.setData(bundle);
             activityHandler.sendMessage(msg);
+        }
+
+        if(getValorAcumulado() > objetivo && !notificacao){
+            this.disparaNotificacao();
+            notificacao = true;
+        }else if(getValorAcumulado() < objetivo && notificacao){
+            notificacao = false;
+            this.cancelaNotificacao();
         }
     }
 
@@ -99,13 +113,48 @@ public class ContadorService extends Service implements Runnable {
         return String.format("%02d:%02d:%02d", horas, minutos, segundos);
     }
 
+    private double getValorAcumulado(){
+        return valorPorSegundo * contador;
+    }
+
     private String getValor() {
-        double valorContado = valorPorSegundo * contador;
-        return String.format("R$ %.2f", valorContado);
+        return String.format("R$ %.2f", getValorAcumulado());
+    }
+
+    @Override
+    public IBinder onBind(Intent arg0) {
+        return new ContadorBinder();
+    }
+
+    public class ContadorBinder extends Binder {
+        public ContadorService getContador() {
+            return ContadorService.this;
+        }
     }
 
     @Override
     public void onDestroy() {
         myHandler.removeCallbacks(this);
+    }
+
+    private void disparaNotificacao(){
+        PendingIntent p = PendingIntent.getActivity(this, 0, new Intent(this, ToRicoActivity.class), 0);
+        Notification n = new Notification.Builder(this)
+                .setTicker("Você atingiu seu objetivo!")
+                .setContentTitle("Objetivo alcançado.")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentText("Parabéns, você atingiu seu objetivo!")
+                .setWhen(System.currentTimeMillis())
+                .setVibrate(new long[]{1000, 1000, 1000})
+                .build();
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        nm.notify(R.string.app_name, n);
+        notificacao = true;
+    }
+
+    private void cancelaNotificacao(){
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        nm.cancel(R.string.app_name);
+        notificacao = false;
     }
 }

@@ -1,5 +1,8 @@
 package br.com.ceolato.torico.activity;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -7,12 +10,14 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import br.com.ceolato.torico.R;
@@ -23,9 +28,11 @@ public class ToRicoActivity extends AppCompatActivity {
     private Button playButton;
     private Button pauseButton;
     private Button stopButton;
+    private SeekBar seekBar;
+    private TextView textView;
+    private int objetivo;
 
     private ContadorService contador;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +42,34 @@ public class ToRicoActivity extends AppCompatActivity {
         stopButton = (Button) findViewById(R.id.btStop);
         pauseButton = (Button) findViewById(R.id.btPause);
         playButton = (Button) findViewById(R.id.btPlay);
+        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        textView = (TextView) findViewById(R.id.textView);
 
         stopButton.setEnabled(false);
         pauseButton.setEnabled(false);
         playButton.setEnabled(true);
+        seekBar.setEnabled(true);
+
+        objetivo = 5;
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
+                objetivo = progresValue;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                textView.setText("R$ " + String.valueOf(objetivo) + ",00");
+                contador.setObjetivo(objetivo);
+            }
+        });
+
 
         startService(new Intent(this, ContadorService.class));
     }
@@ -58,7 +89,6 @@ public class ToRicoActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_to_rico, menu);
         return true;
     }
@@ -79,9 +109,16 @@ public class ToRicoActivity extends AppCompatActivity {
 
     Handler handler = new Handler(new Handler.Callback() {
         public boolean handleMessage(Message msg) {
-            ((TextView) findViewById(R.id.tvValorAcumulado)).setText(msg.getData().getString("valor"));
+            TextView tvValorAcumulado = ((TextView) findViewById(R.id.tvValorAcumulado));
+            tvValorAcumulado.setText(msg.getData().getString("valor"));
             ((TextView) findViewById(R.id.tvTempo)).setText(msg.getData().getString("tempo"));
             ((TextView) findViewById(R.id.tvValorSegundo)).setText(msg.getData().getString("valorSegundo"));
+            double valor = msg.getData().getDouble("valorAcumulado", 0.0D);
+            if(valor >= objetivo){
+                tvValorAcumulado.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.verde));
+            }else{
+                tvValorAcumulado.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.vermelho));
+            }
 
             stopButton.setEnabled(true);
             pauseButton.setEnabled(true);
@@ -96,6 +133,7 @@ public class ToRicoActivity extends AppCompatActivity {
             ContadorService.ContadorBinder binder = (ContadorService.ContadorBinder) service;
             contador = binder.getContador();
             contador.setHandler(handler);
+            contador.setObjetivo(objetivo);
         }
         public void onServiceDisconnected(ComponentName name) {
             contador = null;
@@ -126,6 +164,7 @@ public class ToRicoActivity extends AppCompatActivity {
         playButton.setEnabled(false);
         pauseButton.setEnabled(true);
         stopButton.setEnabled(true);
+        seekBar.setEnabled(false);
     }
 
     public void pause(View v) {
@@ -134,6 +173,7 @@ public class ToRicoActivity extends AppCompatActivity {
         playButton.setEnabled(true);
         pauseButton.setEnabled(false);
         stopButton.setEnabled(true);
+        seekBar.setEnabled(true);
     }
 
     public void stop(View v) {
@@ -142,6 +182,7 @@ public class ToRicoActivity extends AppCompatActivity {
         playButton.setEnabled(true);
         pauseButton.setEnabled(false);
         stopButton.setEnabled(false);
+        seekBar.setEnabled(true);
 
         stopService(new Intent(this, ContadorService.class));
     }
