@@ -7,6 +7,7 @@
     <string name="horas_trabalhadas">Horas Trabalhadas</string>
     <string name="percentual_horas_extras">Percentual Horas Extras</string>
     <string name="title_activity_splash_screen">TôRico</string>
+    <string name="objetivo">Valor máximo do Objetivo a buscar</string>
 
     <string name="tempo">Tempo</string>
     <string name="valor_segundo">Valor/Segundo</string>

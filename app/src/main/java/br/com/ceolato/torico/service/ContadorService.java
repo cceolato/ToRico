@@ -28,6 +28,7 @@ public class ContadorService extends Service implements Runnable {
     private double salarioBruto;
     private int horasTrabalhadas;
     private int percentual;
+    private int objetivoMaximo;
     private int objetivo;
     private double valorPorSegundo;
     private String valorPorSegundoAsString;
@@ -63,6 +64,7 @@ public class ContadorService extends Service implements Runnable {
         salarioBruto = Double.parseDouble(preferences.getString("salario_bruto_key", "0.0"));
         percentual = Integer.parseInt(preferences.getString("percentual_key", "50"));
         horasTrabalhadas = Integer.parseInt(preferences.getString("horas_trabalhadas_key", "220"));
+        objetivoMaximo = Integer.parseInt(preferences.getString("objetivo_key", "10"));
 
         valorPorSegundo = (salarioBruto / horasTrabalhadas / 3600) * (1 + (percentual / 100D));
         valorPorSegundoAsString = String.format("R$ %.4f", valorPorSegundo);
@@ -91,6 +93,7 @@ public class ContadorService extends Service implements Runnable {
             bundle.putString("valor", getValor());
             bundle.putString("valorSegundo", valorPorSegundoAsString);
             bundle.putDouble("valorAcumulado", getValorAcumulado());
+            bundle.putInt("objetivoMaximo", objetivoMaximo);
 
             Message msg = new Message();
             msg.setData(bundle);

@@ -21,4 +21,11 @@
         android:selectAllOnFocus="true"
         android:inputType="number" />
 
+    <EditTextPreference
+        android:key="objetivo_key"
+        android:title="@string/objetivo"
+        android:defaultValue="@integer/objetivo"
+        android:selectAllOnFocus="true"
+        android:inputType="number" />
+
 </PreferenceScreen>
